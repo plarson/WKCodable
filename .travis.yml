@@ -1,6 +1,6 @@
 env:
   global:
-    - SWIFT_BRANCH=swift-4.2-branch
+    - SWIFT_BRANCH=development
     - SWIFT_VERSION=swift-DEVELOPMENT-SNAPSHOT-2018-12-04-a
 matrix:
   include:
