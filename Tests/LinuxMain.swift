@@ -1,11 +1,8 @@
-#if os(Linux)
-
-@testable import WKBCodableTests
 import XCTest
 
-XCTMain([
-	/// WKBCodable
-	testCase(WKBCodableTests.allTests),
-])
+import WKBCodableTests
 
-#endif
+var tests = [XCTestCaseEntry]()
+tests += WKBCodableTests.__allTests()
+
+XCTMain(tests)
