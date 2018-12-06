@@ -1,5 +1,5 @@
 import XCTest
-@testable import WKBCodable
+@testable import WKCodable
 
 class WKBCodableTests: XCTestCase {
     

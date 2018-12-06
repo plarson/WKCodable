@@ -2,14 +2,14 @@
 import PackageDescription
 
 var package = Package(
-    name: "WKBCodable",
+    name: "WKCodable",
     products: [
-        .library(name: "WKBCodable", targets: ["WKBCodable"]),
+        .library(name: "WKCodable", targets: ["WKCodable"]),
     ],
     targets: [
-        .target(name: "WKBCodable"),
+        .target(name: "WKCodable"),
         .testTarget(
-            name: "WKBCodableTests",
-            dependencies: ["WKBCodable"]),
+            name: "WKCodableTests",
+            dependencies: ["WKCodable"]),
     ]
 )
