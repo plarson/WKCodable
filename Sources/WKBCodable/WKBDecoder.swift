@@ -1,5 +1,4 @@
 import Foundation
-import CoreFoundation
 
 public class WKBDecoder {
     public init() {}
@@ -77,9 +76,9 @@ extension WKBDecoder {
     }
     
     private func decode(_ type: Double.Type) throws -> Double {
-        var value = CFSwappedFloat64()
+        var value = UInt64()
         try read(into: &value)
-        return CFConvertFloat64SwappedToHost(value)
+        return Double(bitPattern: value.bigEndian)
     }
 
     private func read<T>(into: inout T) throws {
