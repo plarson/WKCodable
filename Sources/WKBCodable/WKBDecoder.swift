@@ -4,7 +4,7 @@ public class WKBDecoder {
     public init() {}
     fileprivate var bytes: [UInt8] = []
     fileprivate var offset: Int = 0
-    fileprivate var byteOrder: UInt8 = 0
+    fileprivate var byteOrder: WKBByteOrder = .bigEndian
     fileprivate var typeCode: UInt32 = 0
     fileprivate var pointSize: UInt8 = 2
     fileprivate var srid: UInt32 = 2
@@ -19,7 +19,10 @@ public extension WKBDecoder {
 extension WKBDecoder {
     public func decode(from data: Data) throws -> WKBCodable {
         bytes = [UInt8](data)
-        byteOrder = try decode(UInt8.self)
+        guard let byteOrder = WKBByteOrder(rawValue: try decode(UInt8.self)) else {
+            throw Error.dataCorrupted
+        }
+        self.byteOrder = byteOrder
         typeCode = try decode(UInt32.self)
         pointSize = 2
         if typeCode & 0x80000000 != 0 {
@@ -66,19 +69,19 @@ extension WKBDecoder {
     private func decode(_ type: UInt8.Type) throws -> UInt8 {
         var value: UInt8 = 0
         try read(into: &value)
-        return value.bigEndian
+        return byteOrder == .bigEndian ? value.bigEndian : value.littleEndian
     }
     
     private func decode(_ type: UInt32.Type) throws -> UInt32 {
         var value: UInt32 = 0
         try read(into: &value)
-        return value.bigEndian
+        return byteOrder == .bigEndian ? value.bigEndian : value.littleEndian
     }
     
     private func decode(_ type: Double.Type) throws -> Double {
         var value = UInt64()
         try read(into: &value)
-        return Double(bitPattern: value.bigEndian)
+        return Double(bitPattern: byteOrder == .bigEndian ? value.bigEndian : value.littleEndian)
     }
 
     private func read<T>(into: inout T) throws {

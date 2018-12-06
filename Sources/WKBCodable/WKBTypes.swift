@@ -46,14 +46,7 @@ public struct WKBPolygon: WKBCodable {
     public let srid: UInt
 }
 
-public protocol WKBMultiPoint: WKBCodable {
-}
-
-public protocol WKBMultiLineString: WKBCodable {
-}
-
-public protocol WKBMultiPolygon: WKBCodable {
-}
-
-public protocol WKBGeometryCollection: WKBCodable {
+public enum WKBByteOrder: UInt8 {
+    case bigEndian = 0
+    case littleEndian = 1
 }

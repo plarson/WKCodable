@@ -1,7 +1,10 @@
 import Foundation
 
 public class WKBEncoder {
-    public init() {}
+    public init(byteOrder: WKBByteOrder = .bigEndian) {
+        self.byteOrder = byteOrder
+    }
+    fileprivate let byteOrder: WKBByteOrder
     fileprivate var bytes: [UInt8] = []
 }
 
@@ -30,7 +33,7 @@ public extension WKBEncoder {
         append(value)
         return Data(bytes: bytes, count: bytes.count)
     }
-
+        
     func encode(_ value: WKBLineString) throws -> Data {
         appendByteOrder()
         appendTypeCode(TypeCodes.LineString.rawValue, for: value.points.first)
@@ -63,7 +66,7 @@ public extension WKBEncoder {
     }
     
     fileprivate func appendByteOrder() {
-        appendBytes(of: UInt8(0))
+        appendBytes(of: (byteOrder == .bigEndian ? byteOrder.rawValue.bigEndian : byteOrder.rawValue.littleEndian))
     }
     
     fileprivate func appendTypeCode(_ typeCode: UInt32, for point: WKBPoint? = nil) {
@@ -82,11 +85,11 @@ public extension WKBEncoder {
     }
     
     fileprivate func append(_ value: UInt32) {
-        appendBytes(of: value.bigEndian)
+        appendBytes(of: (byteOrder == .bigEndian ? value.bigEndian : value.littleEndian))
     }
 
     fileprivate func append(_ value: Double) {
-        appendBytes(of: value.bitPattern.bigEndian)
+        appendBytes(of: (byteOrder == .bigEndian ? value.bitPattern.bigEndian : value.bitPattern.littleEndian))
     }
     
     fileprivate func append(_ value: WKBPoint) {
