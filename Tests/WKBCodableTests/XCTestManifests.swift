@@ -1,17 +1,6 @@
 import XCTest
 
-extension WKBDecoderTests {
-    static let __allTests = [
-        ("testLineString2D", testLineString2D),
-        ("testLineString3D", testLineString3D),
-        ("testLineString4D", testLineString4D),
-        ("testPoint2D", testPoint2D),
-        ("testPoint3D", testPoint3D),
-        ("testPoint4D", testPoint4D),
-    ]
-}
-
-extension WKBEncoderTests {
+extension WKBCodableTests {
     static let __allTests = [
         ("testLineString2D", testLineString2D),
         ("testLineString3D", testLineString3D),
@@ -20,14 +9,15 @@ extension WKBEncoderTests {
         ("testPoint2D", testPoint2D),
         ("testPoint3D", testPoint3D),
         ("testPoint4D", testPoint4D),
+        ("testPolygon", testPolygon),
+        ("testPolygonEmpty", testPolygonEmpty),
     ]
 }
 
 #if !os(macOS)
 public func __allTests() -> [XCTestCaseEntry] {
     return [
-        testCase(WKBDecoderTests.__allTests),
-        testCase(WKBEncoderTests.__allTests),
+        testCase(WKBCodableTests.__allTests),
     ]
 }
 #endif
