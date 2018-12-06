@@ -39,12 +39,34 @@ extension WKBDecoder {
             result = try decode(WKBPoint.self)
         } else if typeCode == WKBEncoder.TypeCodes.LineString.rawValue {
             result = try decode(WKBLineString.self)
+        } else if typeCode == WKBEncoder.TypeCodes.Polygon.rawValue {
+            result = try decode(WKBPolygon.self)
         }
         
         if result == nil {
             throw Error.dataCorrupted
         } else {
             return result!
+        }
+    }
+
+    private func decode(_ type: WKBPolygon.Type) throws -> WKBPolygon {
+        let count: UInt32 = try decode(UInt32.self)
+        
+        if count == 0 {
+            return WKBPolygon(exteriorRing: WKBLineString(points: []))
+        } else {
+            let exteriorRing: WKBLineString = try decode(WKBLineString.self)
+            var interiorRings: [WKBLineString]?
+            
+            if count > 1 {
+                interiorRings = []
+                for _ in 0..<count - 1 {
+                    interiorRings?.append(try decode(WKBLineString.self))
+                }
+            }
+
+            return WKBPolygon(exteriorRing: exteriorRing, interiorRings: interiorRings)
         }
     }
     

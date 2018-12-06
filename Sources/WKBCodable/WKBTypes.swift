@@ -32,7 +32,7 @@ public struct WKBLineString: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBPolygon: WKBCodable {
+public struct WKBPolygon: WKBCodable, Equatable {
     public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil) {
         self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
     }

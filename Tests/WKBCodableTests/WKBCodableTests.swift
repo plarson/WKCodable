@@ -69,6 +69,8 @@ class WKBCodableTests: XCTestCase {
         let value = WKBPolygon(exteriorRing: WKBLineString(points: []))
         let data = try encoder.encode(value)
         XCTAssertEqual("0020000003000003e800000000", data.hexEncodedString())
+        let value2 = try decoder.decode(from: data) as! WKBPolygon
+        XCTAssertEqual(value, value2)
     }
     
     func testPolygon() throws {
@@ -81,5 +83,7 @@ class WKBCodableTests: XCTestCase {
         let value = WKBPolygon(exteriorRing: lineString)
         let data = try encoder.encode(value)
         XCTAssertEqual("0020000003000003e800000001000000043ff0000000000000400000000000000040080000000000004010000000000000401800000000000040140000000000003ff00000000000004000000000000000", data.hexEncodedString())
+        let value2 = try decoder.decode(from: data) as! WKBPolygon
+        XCTAssertEqual(value, value2)
     }
 }
