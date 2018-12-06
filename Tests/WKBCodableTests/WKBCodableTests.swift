@@ -20,9 +20,10 @@ extension Data {
             let c = String(hex[..<subIndex])
             hex = String(hex[subIndex...])
             var ch: UInt32 = 0
-            Scanner(string: c).scanHexInt32(&ch)
-            var char = UInt8(ch)
-            data.append(&char, count: 1)
+            if Scanner(string: c).scanHexInt32(&ch) {
+                var char = UInt8(ch)
+                data.append(&char, count: 1)
+            }
         }
         return data
     }
