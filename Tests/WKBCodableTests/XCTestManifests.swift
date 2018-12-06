@@ -1,12 +1,10 @@
 #if !os(macOS)
 import XCTest
-@testable import WKBDecoderTests
-@testable import WKBEncoderTests
+@testable import WKBCodableTests
 
 public func allTests() -> [XCTestCaseEntry] {
     return [
-        testCase(WKBDecoderTests.allTests),
-        testCase(WKBEncoderTests.allTests),
+        testCase(WKBCodableTests.allTests),
     ]
 }
 #endif
