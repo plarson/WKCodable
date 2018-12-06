@@ -33,6 +33,9 @@ public struct WKBLineString: WKBCodable, Equatable {
 }
 
 public struct WKBPolygon: WKBCodable {
+    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil) {
+        self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
+    }
     public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil, srid: UInt? = nil) {
         self.exteriorRing = exteriorRing
         self.interiorRings = interiorRings
