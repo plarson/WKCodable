@@ -1,8 +1,8 @@
 import XCTest
 
-import WKBCodableTests
+import WKCodableTests
 
 var tests = [XCTestCaseEntry]()
-tests += WKBCodableTests.__allTests()
+tests += WKCodableTests.__allTests()
 
 XCTMain(tests)
