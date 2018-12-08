@@ -45,19 +45,19 @@ extension WKBDecoder {
             srid = try decode(UInt32.self)
         }
         var result: WKBCodable?
-        if typeCode == WKBEncoder.TypeCodes.Point.rawValue {
+        if typeCode == WKBTypeCode.point.rawValue {
             result = try decode(WKBPoint.self)
-        } else if typeCode == WKBEncoder.TypeCodes.LineString.rawValue {
+        } else if typeCode == WKBTypeCode.lineString.rawValue {
             result = try decode(WKBLineString.self)
-        } else if typeCode == WKBEncoder.TypeCodes.Polygon.rawValue {
+        } else if typeCode == WKBTypeCode.polygon.rawValue {
             result = try decode(WKBPolygon.self)
-        } else if typeCode == WKBEncoder.TypeCodes.MultiPoint.rawValue {
+        } else if typeCode == WKBTypeCode.multiPoint.rawValue {
             result = try decode(WKBMultiPoint.self)
-        } else if typeCode == WKBEncoder.TypeCodes.MultiLineString.rawValue {
+        } else if typeCode == WKBTypeCode.multiLineString.rawValue {
             result = try decode(WKBMultiLineString.self)
-        } else if typeCode == WKBEncoder.TypeCodes.MultiPolygon.rawValue {
+        } else if typeCode == WKBTypeCode.multiPolygon.rawValue {
             result = try decode(WKBMultiPolygon.self)
-        } else if typeCode == WKBEncoder.TypeCodes.GeometryCollection.rawValue {
+        } else if typeCode == WKBTypeCode.geometryCollection.rawValue {
             result = try decode(WKBGeometryCollection.self)
         }
         

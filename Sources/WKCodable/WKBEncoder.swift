@@ -19,14 +19,14 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBPoint, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.Point.rawValue, for: value, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.point.rawValue, for: value, srid: (withSrid ? value.srid : nil))
         append(value)
         return Data(bytes: bytes, count: bytes.count)
     }
         
     func encode(_ value: WKBLineString, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.LineString.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.lineString.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
         if value.points.count > 0 {
             append(value)
         }
@@ -35,7 +35,7 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBPolygon, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.Polygon.rawValue, for: value.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.polygon.rawValue, for: value.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
         if value.exteriorRing.points.count == 0 {
             append(UInt32(0))
         } else {
@@ -50,7 +50,7 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBMultiPoint, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.MultiPoint.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.multiPoint.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
         if value.points.count > 0 {
             try append(value)
         }
@@ -59,7 +59,7 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBMultiLineString, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.MultiLineString.rawValue, for: value.lineStrings.first?.points.first, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.multiLineString.rawValue, for: value.lineStrings.first?.points.first, srid: (withSrid ? value.srid : nil))
         if value.lineStrings.count > 0 {
             try append(value)
         }
@@ -68,7 +68,7 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBMultiPolygon, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.MultiPolygon.rawValue, for: value.polygons.first?.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.multiPolygon.rawValue, for: value.polygons.first?.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
         if value.polygons.count > 0 {
             try append(value)
         }
@@ -77,7 +77,7 @@ public extension WKBEncoder {
     
     func encode(_ value: WKBGeometryCollection, withSrid: Bool = true) throws -> Data {
         appendByteOrder()
-        appendTypeCode(TypeCodes.GeometryCollection.rawValue, for: nil, srid: (withSrid ? value.srid : nil))
+        appendTypeCode(WKBTypeCode.geometryCollection.rawValue, for: nil, srid: (withSrid ? value.srid : nil))
         if value.geometries.count > 0 {
             try append(value)
         }

@@ -4,19 +4,19 @@ public protocol WKBCodable {
     var srid: UInt { get }
 }
 
-public extension WKBEncoder {
-    enum TypeCodes: UInt32 {
-        case Point = 1
-        case LineString = 2
-        case Polygon = 3
-        case MultiPoint = 4
-        case MultiLineString = 5
-        case MultiPolygon = 6
-        case GeometryCollection = 7
-    }
+public typealias WKBGeometry = WKBCodable & Equatable
+
+enum WKBTypeCode: UInt32 {
+    case point = 1
+    case lineString = 2
+    case polygon = 3
+    case multiPoint = 4
+    case multiLineString = 5
+    case multiPolygon = 6
+    case geometryCollection = 7
 }
 
-public struct WKBPoint: WKBCodable, Equatable {
+public struct WKBPoint: WKBGeometry {
     public init(vector: [Double], srid: UInt? = nil) {
         self.vector = vector
         self.srid = srid ?? 1000
@@ -35,7 +35,7 @@ public struct WKBPoint: WKBCodable, Equatable {
     }
 }
 
-public struct WKBLineString: WKBCodable, Equatable {
+public struct WKBLineString: WKBGeometry {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 1000
@@ -44,7 +44,7 @@ public struct WKBLineString: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBPolygon: WKBCodable, Equatable {
+public struct WKBPolygon: WKBGeometry {
     public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil) {
         self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
     }
@@ -58,7 +58,7 @@ public struct WKBPolygon: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBMultiPoint: WKBCodable, Equatable {
+public struct WKBMultiPoint: WKBGeometry {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 1000
@@ -67,7 +67,7 @@ public struct WKBMultiPoint: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBMultiLineString: WKBCodable, Equatable {
+public struct WKBMultiLineString: WKBGeometry {
     public init(lineStrings: [WKBLineString], srid: UInt? = nil) {
         self.lineStrings = lineStrings
         self.srid = srid ?? 1000
@@ -76,7 +76,7 @@ public struct WKBMultiLineString: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBMultiPolygon: WKBCodable, Equatable {
+public struct WKBMultiPolygon: WKBGeometry {
     public init(polygons: [WKBPolygon], srid: UInt? = nil) {
         self.polygons = polygons
         self.srid = srid ?? 1000
@@ -85,7 +85,8 @@ public struct WKBMultiPolygon: WKBCodable, Equatable {
     public let srid: UInt
 }
 
-public struct WKBGeometryCollection: WKBCodable {    
+public struct WKBGeometryCollection: WKBCodable {
+    
     public init(geometries: [WKBCodable], srid: UInt? = nil) {
         self.geometries = geometries
         self.srid = srid ?? 1000
