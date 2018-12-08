@@ -39,6 +39,8 @@ class WKBCodableLittleEndianTests: XCTestCase {
         let value = WKBLineString(points: [])
         let data = try encoder.encode(value)
         XCTAssertEqual("0102000020e8030000", data.hexEncodedString())
+        let value2 = try decoder.decode(from: data) as! WKBLineString
+        XCTAssertEqual(value, value2)
     }
     
     func testLineString2D() throws {
@@ -85,5 +87,71 @@ class WKBCodableLittleEndianTests: XCTestCase {
         XCTAssertEqual("0103000020e80300000100000004000000000000000000f03f00000000000000400000000000000840000000000000104000000000000018400000000000001440000000000000f03f0000000000000040", data.hexEncodedString())
         let value2 = try decoder.decode(from: data) as! WKBPolygon
         XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiPointEmpty() throws {
+        let value = WKBMultiPoint(points: [])
+        let data = try encoder.encode(value)
+        XCTAssertEqual("0104000020e8030000", data.hexEncodedString())
+        let value2 = try decoder.decode(from: data) as! WKBMultiPoint
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiPoint() throws {
+        let value = WKBMultiPoint(points: [ WKBPoint(vector: [1,2]), WKBPoint(vector: [2,3]) ])
+        let data = try encoder.encode(value)
+        XCTAssertEqual("0104000020e8030000020000000101000000000000000000f03f0000000000000040010100000000000000000000400000000000000840", data.hexEncodedString())
+        let value2 = try decoder.decode(from: data) as! WKBMultiPoint
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiLineStringEmpty() throws {
+        let value = WKBMultiLineString(lineStrings: [])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBMultiLineString
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiLineString() throws {
+        let value = WKBMultiLineString(lineStrings: [ WKBLineString(points: [ WKBPoint(vector: [1,2]), WKBPoint(vector: [2,3]) ]),
+                                                      WKBLineString(points: [ WKBPoint(vector: [4,5]), WKBPoint(vector: [6,7]) ]) ])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBMultiLineString
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiPolygonEmpty() throws {
+        let value = WKBMultiLineString(lineStrings: [])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBMultiLineString
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testMultiPolygonString() throws {
+        let lineString = WKBLineString(points: [
+            WKBPoint(vector: [1,2]),
+            WKBPoint(vector: [3,4]),
+            WKBPoint(vector: [6,5]),
+            WKBPoint(vector: [1,2]),
+            ])
+        let polygon = WKBPolygon(exteriorRing: lineString)
+        let lineString2 = WKBLineString(points: [
+            WKBPoint(vector: [1,2]),
+            WKBPoint(vector: [3,4]),
+            WKBPoint(vector: [6,5]),
+            WKBPoint(vector: [1,2]),
+            ])
+        let polygon2 = WKBPolygon(exteriorRing: lineString2)
+        let value = WKBMultiPolygon(polygons: [ polygon, polygon2 ])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBMultiPolygon
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testGeometryCollectionEmpty() throws {
+        let value = WKBGeometryCollection(geometries: [])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBGeometryCollection
+        XCTAssert(value2.geometries.count == 0)
     }
 }
