@@ -1,10 +1,16 @@
 import Foundation
 
-public protocol WKBCodable {
+public protocol WKBGeometry {
     var srid: UInt { get }
+    func isEqualTo(_ other: WKBGeometry) -> Bool
 }
 
-public typealias WKBGeometry = WKBCodable & Equatable
+extension WKBGeometry where Self: Equatable {
+    public func isEqualTo(_ other: WKBGeometry) -> Bool {
+        guard let otherFruit = other as? Self else { return false }
+        return self == otherFruit
+    }
+}
 
 enum WKBTypeCode: UInt32 {
     case point = 1
@@ -16,7 +22,7 @@ enum WKBTypeCode: UInt32 {
     case geometryCollection = 7
 }
 
-public struct WKBPoint: WKBGeometry {
+public struct WKBPoint: WKBGeometry, Equatable {
     public init(vector: [Double], srid: UInt? = nil) {
         self.vector = vector
         self.srid = srid ?? 0
@@ -35,7 +41,7 @@ public struct WKBPoint: WKBGeometry {
     }
 }
 
-public struct WKBLineString: WKBGeometry {
+public struct WKBLineString: WKBGeometry, Equatable {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 0
@@ -44,7 +50,7 @@ public struct WKBLineString: WKBGeometry {
     public let srid: UInt
 }
 
-public struct WKBPolygon: WKBGeometry {
+public struct WKBPolygon: WKBGeometry, Equatable {
     public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil) {
         self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
     }
@@ -58,7 +64,7 @@ public struct WKBPolygon: WKBGeometry {
     public let srid: UInt
 }
 
-public struct WKBMultiPoint: WKBGeometry {
+public struct WKBMultiPoint: WKBGeometry, Equatable {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 0
@@ -67,7 +73,7 @@ public struct WKBMultiPoint: WKBGeometry {
     public let srid: UInt
 }
 
-public struct WKBMultiLineString: WKBGeometry {
+public struct WKBMultiLineString: WKBGeometry, Equatable {
     public init(lineStrings: [WKBLineString], srid: UInt? = nil) {
         self.lineStrings = lineStrings
         self.srid = srid ?? 0
@@ -76,7 +82,7 @@ public struct WKBMultiLineString: WKBGeometry {
     public let srid: UInt
 }
 
-public struct WKBMultiPolygon: WKBGeometry {
+public struct WKBMultiPolygon: WKBGeometry, Equatable {
     public init(polygons: [WKBPolygon], srid: UInt? = nil) {
         self.polygons = polygons
         self.srid = srid ?? 0
@@ -85,14 +91,28 @@ public struct WKBMultiPolygon: WKBGeometry {
     public let srid: UInt
 }
 
-public struct WKBGeometryCollection: WKBCodable {
-    
-    public init(geometries: [WKBCodable], srid: UInt? = nil) {
+public struct WKBGeometryCollection: WKBGeometry, Equatable {
+    public init(geometries: [WKBGeometry], srid: UInt? = nil) {
         self.geometries = geometries
         self.srid = srid ?? 0
     }
-    public let geometries: [WKBCodable]
+    public let geometries: [WKBGeometry]
     public let srid: UInt
+    
+    public static func == (lhs: WKBGeometryCollection, rhs: WKBGeometryCollection) -> Bool {
+        guard lhs.srid == rhs.srid else {
+            return false
+        }
+        guard lhs.geometries.count == rhs.geometries.count else {
+            return false
+        }
+        for i in 0..<lhs.geometries.count {
+            guard lhs.geometries[i].isEqualTo(rhs.geometries[i]) else {
+                return false
+            }
+        }
+        return true
+    }
 }
 
 public enum WKBByteOrder: UInt8 {

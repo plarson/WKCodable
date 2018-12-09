@@ -141,6 +141,20 @@ class WKBCodableTests: XCTestCase {
         let value = WKBGeometryCollection(geometries: [])
         let data = try encoder.encode(value)
         let value2 = try decoder.decode(from: data) as! WKBGeometryCollection
-        XCTAssert(value2.geometries.count == 0)
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testGeometryCollection() throws {
+        let value = WKBGeometryCollection(geometries: [ WKBPoint(vector: [1,2]) ])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBGeometryCollection
+        XCTAssertEqual(value, value2)
+    }
+    
+    func testGeometryCollectionLineString() throws {
+        let value = WKBGeometryCollection(geometries: [ WKBLineString(points: [ WKBPoint(vector: [1,2]), WKBPoint(vector: [2,3]) ]) ])
+        let data = try encoder.encode(value)
+        let value2 = try decoder.decode(from: data) as! WKBGeometryCollection
+        XCTAssertEqual(value, value2)
     }
 }

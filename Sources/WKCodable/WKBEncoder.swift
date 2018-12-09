@@ -10,7 +10,7 @@ public class WKBEncoder {
 
 public extension WKBEncoder {
     enum Error: Swift.Error {
-        case typeNotConformingToWKBCodable(Any.Type)
+        case typeNotConformingToWKBGeometry(Any.Type)
     }
 }
 
@@ -123,8 +123,24 @@ public extension WKBEncoder {
     }
     
     @discardableResult
-    private func encode(_ value: WKBCodable, withSrid: Bool) throws -> Data {
-        throw Error.typeNotConformingToWKBCodable(type(of: value))
+    private func encode(_ value: WKBGeometry, withSrid: Bool) throws -> Data {
+        if let value = value as? WKBPoint {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBLineString {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBLineString {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBPolygon {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBMultiPoint {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBMultiLineString {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBMultiPolygon {
+            return try encode(value, withSrid: withSrid)
+        } else {
+            throw Error.typeNotConformingToWKBGeometry(type(of: value))
+        }
     }
     
     private func appendByteOrder() {

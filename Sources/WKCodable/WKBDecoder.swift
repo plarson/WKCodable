@@ -17,16 +17,16 @@ public extension WKBDecoder {
 }
 
 extension WKBDecoder {
-    public func decode(from data: Data) throws -> WKBCodable {
+    public func decode(from data: Data) throws -> WKBGeometry {
         return try decode(from: [UInt8](data))
     }
     
-    public func decode(from bytes: [UInt8], srid: UInt32? = nil) throws -> WKBCodable {
+    public func decode(from bytes: [UInt8], srid: UInt32? = nil) throws -> WKBGeometry {
         self.bytes = bytes
         return try decode(srid: nil)
     }
     
-    private func decode(srid: UInt32? = nil) throws -> WKBCodable {
+    private func decode(srid: UInt32? = nil) throws -> WKBGeometry {
         var srid = srid
         guard let byteOrder = WKBByteOrder(rawValue: try decode(UInt8.self)) else {
             throw Error.dataCorrupted
@@ -44,7 +44,7 @@ extension WKBDecoder {
             typeCode &= 0x0fffffff
             srid = try decode(UInt32.self)
         }
-        var result: WKBCodable?
+        var result: WKBGeometry?
         if typeCode == WKBTypeCode.point.rawValue {
             result = try decode(WKBPoint.self)
         } else if typeCode == WKBTypeCode.lineString.rawValue {
@@ -163,12 +163,9 @@ extension WKBDecoder {
             // Empty case
             return WKBGeometryCollection(geometries: [])
         }
-        var subvalues: [WKBGeometryCollection] = []
+        var subvalues: [WKBGeometry] = []
         for _ in 0..<count {
-            guard let subvalue = try decode(srid: self.srid) as? WKBGeometryCollection else {
-                throw Error.dataCorrupted
-            }
-            
+            let subvalue = try decode(srid: self.srid)
             subvalues.append(subvalue)
         }
         return WKBGeometryCollection(geometries: subvalues)
