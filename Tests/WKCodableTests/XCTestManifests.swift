@@ -2,7 +2,9 @@ import XCTest
 
 extension WKBCodableLittleEndianTests {
     static let __allTests = [
+        ("testGeometryCollection", testGeometryCollection),
         ("testGeometryCollectionEmpty", testGeometryCollectionEmpty),
+        ("testGeometryCollectionLineString", testGeometryCollectionLineString),
         ("testLineString2D", testLineString2D),
         ("testLineString3D", testLineString3D),
         ("testLineString4D", testLineString4D),
@@ -23,7 +25,9 @@ extension WKBCodableLittleEndianTests {
 
 extension WKBCodableTests {
     static let __allTests = [
+        ("testGeometryCollection", testGeometryCollection),
         ("testGeometryCollectionEmpty", testGeometryCollectionEmpty),
+        ("testGeometryCollectionLineString", testGeometryCollectionLineString),
         ("testLineString2D", testLineString2D),
         ("testLineString3D", testLineString3D),
         ("testLineString4D", testLineString4D),
