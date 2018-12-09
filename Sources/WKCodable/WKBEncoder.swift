@@ -5,12 +5,11 @@ public class WKBEncoder {
         self.byteOrder = byteOrder
     }
     fileprivate let byteOrder: WKBByteOrder
-    fileprivate var bytes: [UInt8] = []
+    fileprivate var data: Data = Data()
 }
 
 public extension WKBEncoder {
     enum Error: Swift.Error {
-        case invalidPoint
         case typeNotConformingToWKBCodable(Any.Type)
     }
 }
@@ -21,7 +20,7 @@ public extension WKBEncoder {
         appendByteOrder()
         appendTypeCode(WKBTypeCode.point.rawValue, for: value, srid: (withSrid ? value.srid : nil))
         append(value)
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
         
     func encode(_ value: WKBLineString, withSrid: Bool = true) throws -> Data {
@@ -30,7 +29,7 @@ public extension WKBEncoder {
         if value.points.count > 0 {
             append(value)
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ value: WKBPolygon, withSrid: Bool = true) throws -> Data {
@@ -45,7 +44,7 @@ public extension WKBEncoder {
                 append(interiorRing)
             }
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ value: WKBMultiPoint, withSrid: Bool = true) throws -> Data {
@@ -54,7 +53,7 @@ public extension WKBEncoder {
         if value.points.count > 0 {
             try append(value)
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ value: WKBMultiLineString, withSrid: Bool = true) throws -> Data {
@@ -63,7 +62,7 @@ public extension WKBEncoder {
         if value.lineStrings.count > 0 {
             try append(value)
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ value: WKBMultiPolygon, withSrid: Bool = true) throws -> Data {
@@ -72,7 +71,7 @@ public extension WKBEncoder {
         if value.polygons.count > 0 {
             try append(value)
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ value: WKBGeometryCollection, withSrid: Bool = true) throws -> Data {
@@ -81,7 +80,7 @@ public extension WKBEncoder {
         if value.geometries.count > 0 {
             try append(value)
         }
-        return Data(bytes: bytes, count: bytes.count)
+        return data
     }
     
     func encode(_ encodable: WKBCodable, withSrid: Bool = true) throws -> Data {
@@ -175,7 +174,8 @@ public extension WKBEncoder {
     fileprivate func appendBytes<T>(of value: T) {
         var value = value
         withUnsafeBytes(of: &value) {
-            bytes.append(contentsOf: $0)
+            data += $0
         }
+
     }
 }
