@@ -19,7 +19,7 @@ enum WKBTypeCode: UInt32 {
 public struct WKBPoint: WKBGeometry {
     public init(vector: [Double], srid: UInt? = nil) {
         self.vector = vector
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let vector: [Double]
     public let srid: UInt
@@ -38,7 +38,7 @@ public struct WKBPoint: WKBGeometry {
 public struct WKBLineString: WKBGeometry {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let points: [WKBPoint]
     public let srid: UInt
@@ -51,7 +51,7 @@ public struct WKBPolygon: WKBGeometry {
     public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil, srid: UInt? = nil) {
         self.exteriorRing = exteriorRing
         self.interiorRings = interiorRings
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let exteriorRing: WKBLineString
     public let interiorRings: [WKBLineString]?
@@ -61,7 +61,7 @@ public struct WKBPolygon: WKBGeometry {
 public struct WKBMultiPoint: WKBGeometry {
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let points: [WKBPoint]
     public let srid: UInt
@@ -70,7 +70,7 @@ public struct WKBMultiPoint: WKBGeometry {
 public struct WKBMultiLineString: WKBGeometry {
     public init(lineStrings: [WKBLineString], srid: UInt? = nil) {
         self.lineStrings = lineStrings
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let lineStrings: [WKBLineString]
     public let srid: UInt
@@ -79,7 +79,7 @@ public struct WKBMultiLineString: WKBGeometry {
 public struct WKBMultiPolygon: WKBGeometry {
     public init(polygons: [WKBPolygon], srid: UInt? = nil) {
         self.polygons = polygons
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let polygons: [WKBPolygon]
     public let srid: UInt
@@ -89,7 +89,7 @@ public struct WKBGeometryCollection: WKBCodable {
     
     public init(geometries: [WKBCodable], srid: UInt? = nil) {
         self.geometries = geometries
-        self.srid = srid ?? 1000
+        self.srid = srid ?? 0
     }
     public let geometries: [WKBCodable]
     public let srid: UInt
