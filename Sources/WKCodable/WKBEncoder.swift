@@ -128,15 +128,15 @@ public extension WKBEncoder {
             return try encode(value, withSrid: withSrid)
         } else if let value = value as? WKBLineString {
             return try encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBLineString {
-            return try encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBPolygon {
+        }else if let value = value as? WKBPolygon {
             return try encode(value, withSrid: withSrid)
         } else if let value = value as? WKBMultiPoint {
             return try encode(value, withSrid: withSrid)
         } else if let value = value as? WKBMultiLineString {
             return try encode(value, withSrid: withSrid)
         } else if let value = value as? WKBMultiPolygon {
+            return try encode(value, withSrid: withSrid)
+        } else if let value = value as? WKBGeometryCollection {
             return try encode(value, withSrid: withSrid)
         } else {
             throw Error.typeNotConformingToWKBGeometry(type(of: value))
