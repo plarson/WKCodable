@@ -12,7 +12,7 @@
 ## Swift Package Manager
 
 ```swift
-.Package(url: "https://github.com/plarson/WKCodable", majorVersion: 0, minor: 1)
+.package(url: "https://github.com/plarson/WKCodable.git", .branch("master"))
 ```
 
 :gift_heart: Contributing
