@@ -1,4 +1,4 @@
-# WKBCodable
+# WKCodable
 
 [![Build Status](https://travis-ci.org/plarson/WKBCodable.svg?branch=master)](https://travis-ci.org/plarson/WKBCodable)
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
