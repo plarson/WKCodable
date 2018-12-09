@@ -2,11 +2,11 @@ import Foundation
 
 public protocol WKBGeometry {
     var srid: UInt { get }
-    func isEqualTo(_ other: WKBGeometry) -> Bool
+    func isEqual(to other: WKBGeometry) -> Bool
 }
 
 extension WKBGeometry where Self: Equatable {
-    public func isEqualTo(_ other: WKBGeometry) -> Bool {
+    public func isEqual(to other: WKBGeometry) -> Bool {
         guard let otherFruit = other as? Self else { return false }
         return self == otherFruit
     }
@@ -107,7 +107,7 @@ public struct WKBGeometryCollection: WKBGeometry, Equatable {
             return false
         }
         for i in 0..<lhs.geometries.count {
-            guard lhs.geometries[i].isEqualTo(rhs.geometries[i]) else {
+            guard lhs.geometries[i].isEqual(to: rhs.geometries[i]) else {
                 return false
             }
         }
