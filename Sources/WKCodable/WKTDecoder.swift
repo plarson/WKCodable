@@ -119,7 +119,11 @@ public extension WKTDecoder {
     }
     
     private func scanType() -> WKTTypeCode? {
+        #if !os(macOS)
+        var rawType: String? = ""
+        #else
         var rawType: NSString? = ""
+        #endif
         let boundarySet = CharacterSet.whitespaces.union(CharacterSet(charactersIn: "("))
         scanner.scanUpToCharacters(from: boundarySet, into: &rawType)
         
