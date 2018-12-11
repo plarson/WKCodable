@@ -39,8 +39,7 @@ public extension WKTEncoder {
             append(" EMPTY")
         } else {
             append("(")
-            let lineStrings: [WKBLineString] = [ value.exteriorRing ] + (value.interiorRings ?? [])
-            let components = lineStrings.map { string(for: $0) }
+            let components = value.lineStrings.map { string(for: $0) }
             append(components.joined(separator: ", "))
             append(")")
         }
@@ -156,9 +155,8 @@ public extension WKTEncoder {
     }
     
     private func string(for value: WKBPolygon) -> String {
-        let lineStrings = [ value.exteriorRing ] + (value.interiorRings ?? [])
         var string = "("
-        string += lineStrings.map { self.string(for: $0) }.joined(separator: ", ")
+        string += value.lineStrings.map { self.string(for: $0) }.joined(separator: ", ")
         string += ")"
         return string
     }
