@@ -12,7 +12,7 @@ Well-Known [Binary](http://edndoc.esri.com/arcsde/8.3/sql_interface/concepts/the
 ## Swift Package Manager
 
 ```swift
-.package(url: "https://github.com/plarson/WKCodable.git", .branch("master"))
+.package(url: "https://github.com/plarson/WKCodable.git", from: "0.1.0")
 ```
 
 :gift_heart: Contributing
