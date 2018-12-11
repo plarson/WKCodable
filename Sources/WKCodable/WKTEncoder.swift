@@ -8,44 +8,8 @@ public class WKTEncoder {
 public extension WKTEncoder {
     
     // MARK: - Public
-    
-    public func encode(_ value: WKBPoint) -> String {
-        result = ""
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBLineString) -> String {
-        result = String()
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBPolygon) -> String {
-        result = String()
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBMultiPoint) -> String {
-        result = String()
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBMultiLineString) -> String {
-        result = String()
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBMultiPolygon) -> String {
-        result = String()
-        encode(value, withSrid: true)
-        return result
-    }
-    
-    public func encode(_ value: WKBGeometryCollection) -> String {
+
+    public func encode(_ value: WKBGeometry) -> String {
         result = String()
         encode(value, withSrid: true)
         return result

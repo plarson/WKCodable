@@ -2,6 +2,7 @@ import Foundation
 
 public class WKTDecoder {
     public init() {}
+    private var srid: UInt = 0
     private var scanner: Scanner!
 }
 
@@ -19,11 +20,17 @@ public extension WKTDecoder {
         scanner = Scanner(string: value)
         scanner.charactersToBeSkipped = CharacterSet.whitespaces
         scanner.caseSensitive = false
-        
+        srid = try scanSRID()
+        return try scanGeometry()!
+    }
+    
+    // MARK: - Private
+    
+    func scanSRID() throws -> UInt {
         if !scanner.scanString("SRID=", into: nil) {
             throw Error.dataCorrupted
         }
-
+        
         var srid: Int32 = 0
         if !scanner.scanInt32(&srid) {
             throw Error.dataCorrupted
@@ -32,8 +39,8 @@ public extension WKTDecoder {
         if !scanner.scanString(";", into: nil) {
             throw Error.dataCorrupted
         }
-        
-        return try scanGeometry()!
+
+        return UInt(srid)
     }
     
     func scanGeometry() throws -> WKBGeometry? {
@@ -51,7 +58,7 @@ public extension WKTDecoder {
             return point
         case .lineString:
             if empty{
-                return WKBLineString(points: [])
+                return WKBLineString()
             } else {
                 var points: [WKBPoint] = []
                 while let point = scanPoint() {

@@ -18,43 +18,7 @@ public extension WKBEncoder {
     
     // MARK: - Public
     
-    public func encode(_ value: WKBPoint) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBLineString) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBPolygon) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBMultiPoint) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBMultiLineString) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBMultiPolygon) -> Data {
-        data = Data()
-        encode(value, withSrid: true)
-        return data
-    }
-    
-    public func encode(_ value: WKBGeometryCollection) -> Data {
+    public func encode(_ value: WKBGeometry) -> Data {
         data = Data()
         encode(value, withSrid: true)
         return data

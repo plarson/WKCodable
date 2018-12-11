@@ -51,6 +51,9 @@ public struct WKBPoint: WKBGeometry, Equatable {
 }
 
 public struct WKBLineString: WKBGeometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(points: [], srid: srid)
+    }
     public init(points: [WKBPoint], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 0
