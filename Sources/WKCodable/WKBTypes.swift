@@ -7,8 +7,8 @@ public protocol WKBGeometry {
 
 extension WKBGeometry where Self: Equatable {
     public func isEqual(to other: WKBGeometry) -> Bool {
-        guard let otherFruit = other as? Self else { return false }
-        return self == otherFruit
+        guard let other = other as? Self else { return false }
+        return self == other
     }
 }
 enum WKBTypeCode: UInt32 {
