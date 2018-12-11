@@ -46,9 +46,9 @@ public extension WKBEncoder {
         if value.exteriorRing.points.count == 0 {
             append(UInt32(0))
         } else {
-            append(UInt32(1 + (value.interiorRings?.count ?? 0)))
+            append(UInt32(1 + value.interiorRings.count))
             append(value.exteriorRing)
-            for interiorRing in value.interiorRings ?? [] {
+            for interiorRing in value.interiorRings {
                 append(interiorRing)
             }
         }

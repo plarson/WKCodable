@@ -63,16 +63,17 @@ public struct WKBLineString: WKBGeometry, Equatable {
 }
 
 public struct WKBPolygon: WKBGeometry, Equatable {
-    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil) {
+    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString] = []) {
         self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
     }
-    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString]? = nil, srid: UInt? = nil) {
+    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString] = [], srid: UInt? = nil) {
         self.exteriorRing = exteriorRing
         self.interiorRings = interiorRings
         self.srid = srid ?? 0
     }
     public let exteriorRing: WKBLineString
-    public let interiorRings: [WKBLineString]?
+    public let interiorRings: [WKBLineString]
+    public var lineStrings: [WKBLineString] { return [exteriorRing] + interiorRings }
     public let srid: UInt
 }
 

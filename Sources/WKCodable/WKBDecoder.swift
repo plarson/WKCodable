@@ -97,12 +97,11 @@ extension WKBDecoder {
             return WKBPolygon(exteriorRing: WKBLineString(points: []))
         } else {
             let exteriorRing: WKBLineString = try decode(WKBLineString.self)
-            var interiorRings: [WKBLineString]?
+            var interiorRings: [WKBLineString] = []
             
             if count > 1 {
-                interiorRings = []
                 for _ in 0..<count - 1 {
-                    interiorRings?.append(try decode(WKBLineString.self))
+                    interiorRings.append(try decode(WKBLineString.self))
                 }
             }
             

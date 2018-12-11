@@ -197,7 +197,7 @@ public extension WKTDecoder {
             return nil
         }
         
-        let interiorRings = lineStrings.count > 1 ? Array(lineStrings[1...]) : nil
+        let interiorRings = Array(lineStrings[1...])
         return WKBPolygon(exteriorRing: lineStrings.first!, interiorRings: interiorRings)
     }
     
