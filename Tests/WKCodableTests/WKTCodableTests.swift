@@ -1,20 +1,20 @@
 import XCTest
 @testable import WKCodable
 
-class WKBCodableLittleEndianTests: XCTestCase {
-    
-    var encoder: WKBEncoder!
-    var decoder: WKBDecoder!
+class WKTCodableTests: XCTestCase {
+
+    var encoder: WKTEncoder!
+    var decoder: WKTDecoder!
     
     override func setUp() {
-        encoder = WKBEncoder(byteOrder: .littleEndian)
-        decoder = WKBDecoder()
+        encoder = WKTEncoder()
+        decoder = WKTDecoder()
     }
-  
+    
     func testPoint2D() throws {
         let value = WKBPoint(vector: [1,2])
-        let data = encoder.encode(value)
-        let value2 = try decoder.decode(from: data) as! WKBPoint
+        let string = encoder.encode(value)
+        let value2 = try decoder.decode(from: string) as! WKBPoint
         XCTAssertEqual(value, value2)
     }
     
@@ -31,7 +31,7 @@ class WKBCodableLittleEndianTests: XCTestCase {
         let value2 = try decoder.decode(from: data) as! WKBPoint
         XCTAssertEqual(value, value2)
     }
-    
+        
     func testLineStringEmpty() throws {
         let value = WKBLineString(points: [])
         let data = encoder.encode(value)
@@ -143,7 +143,7 @@ class WKBCodableLittleEndianTests: XCTestCase {
         let value2 = try decoder.decode(from: data) as! WKBGeometryCollection
         XCTAssertEqual(value, value2)
     }
-
+    
     func testGeometryCollection() throws {
         let value = WKBGeometryCollection(geometries: [ WKBPoint(vector: [1,2]) ])
         let data = encoder.encode(value)
@@ -158,3 +158,4 @@ class WKBCodableLittleEndianTests: XCTestCase {
         XCTAssertEqual(value, value2)
     }
 }
+

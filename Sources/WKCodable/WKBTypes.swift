@@ -11,7 +11,6 @@ extension WKBGeometry where Self: Equatable {
         return self == otherFruit
     }
 }
-
 enum WKBTypeCode: UInt32 {
     case point = 1
     case lineString = 2
@@ -20,6 +19,16 @@ enum WKBTypeCode: UInt32 {
     case multiLineString = 5
     case multiPolygon = 6
     case geometryCollection = 7
+}
+
+enum WKTTypeCode: String {
+    case point = "Point"
+    case lineString = "LineString"
+    case polygon = "Polygon"
+    case multiPoint = "MultiPoint"
+    case multiLineString = "MultiLineString"
+    case multiPolygon = "MultiPolygon"
+    case geometryCollection = "GeometryCollection"
 }
 
 public struct WKBPoint: WKBGeometry, Equatable {
