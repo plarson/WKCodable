@@ -1,12 +1,12 @@
 import Foundation
 
-public protocol WKBGeometry {
+public protocol Geometry {
     var srid: UInt { get }
-    func isEqual(to other: WKBGeometry) -> Bool
+    func isEqual(to other: Geometry) -> Bool
 }
 
-extension WKBGeometry where Self: Equatable {
-    public func isEqual(to other: WKBGeometry) -> Bool {
+extension Geometry where Self: Equatable {
+    public func isEqual(to other: Geometry) -> Bool {
         guard let other = other as? Self else { return false }
         return self == other
     }
@@ -31,7 +31,7 @@ enum WKTTypeCode: String {
     case geometryCollection = "GeometryCollection"
 }
 
-public struct WKBPoint: WKBGeometry, Equatable {
+public struct Point: Geometry, Equatable {
     public init(vector: [Double], srid: UInt? = nil) {
         self.vector = vector
         self.srid = srid ?? 0
@@ -50,69 +50,84 @@ public struct WKBPoint: WKBGeometry, Equatable {
     }
 }
 
-public struct WKBLineString: WKBGeometry, Equatable {
+public struct LineString: Geometry, Equatable {
     public init(srid: UInt? = nil) {
         self.init(points: [], srid: srid)
     }
-    public init(points: [WKBPoint], srid: UInt? = nil) {
+    public init(points: [Point], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 0
     }
-    public let points: [WKBPoint]
+    public let points: [Point]
     public let srid: UInt
 }
 
-public struct WKBPolygon: WKBGeometry, Equatable {
-    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString] = []) {
+public struct Polygon: Geometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(exteriorRing: LineString(), interiorRings: [], srid: srid)
+    }
+    public init(exteriorRing: LineString, interiorRings: [LineString] = []) {
         self.init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: nil)
     }
-    public init(exteriorRing: WKBLineString, interiorRings: [WKBLineString] = [], srid: UInt? = nil) {
+    public init(exteriorRing: LineString, interiorRings: [LineString] = [], srid: UInt? = nil) {
         self.exteriorRing = exteriorRing
         self.interiorRings = interiorRings
         self.srid = srid ?? 0
     }
-    public let exteriorRing: WKBLineString
-    public let interiorRings: [WKBLineString]
-    public var lineStrings: [WKBLineString] { return [exteriorRing] + interiorRings }
+    public let exteriorRing: LineString
+    public let interiorRings: [LineString]
+    public var lineStrings: [LineString] { return [exteriorRing] + interiorRings }
     public let srid: UInt
 }
 
-public struct WKBMultiPoint: WKBGeometry, Equatable {
-    public init(points: [WKBPoint], srid: UInt? = nil) {
+public struct MultiPoint: Geometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(points: [], srid: srid)
+    }
+    public init(points: [Point], srid: UInt? = nil) {
         self.points = points
         self.srid = srid ?? 0
     }
-    public let points: [WKBPoint]
+    public let points: [Point]
     public let srid: UInt
 }
 
-public struct WKBMultiLineString: WKBGeometry, Equatable {
-    public init(lineStrings: [WKBLineString], srid: UInt? = nil) {
+public struct MultiLineString: Geometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(lineStrings: [], srid: srid)
+    }
+    public init(lineStrings: [LineString], srid: UInt? = nil) {
         self.lineStrings = lineStrings
         self.srid = srid ?? 0
     }
-    public let lineStrings: [WKBLineString]
+    public let lineStrings: [LineString]
     public let srid: UInt
 }
 
-public struct WKBMultiPolygon: WKBGeometry, Equatable {
-    public init(polygons: [WKBPolygon], srid: UInt? = nil) {
+public struct MultiPolygon: Geometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(polygons: [], srid: srid)
+    }
+    public init(polygons: [Polygon], srid: UInt? = nil) {
         self.polygons = polygons
         self.srid = srid ?? 0
     }
-    public let polygons: [WKBPolygon]
+    public let polygons: [Polygon]
     public let srid: UInt
 }
 
-public struct WKBGeometryCollection: WKBGeometry, Equatable {
-    public init(geometries: [WKBGeometry], srid: UInt? = nil) {
+public struct GeometryCollection: Geometry, Equatable {
+    public init(srid: UInt? = nil) {
+        self.init(geometries: [], srid: srid)
+    }
+    public init(geometries: [Geometry], srid: UInt? = nil) {
         self.geometries = geometries
         self.srid = srid ?? 0
     }
-    public let geometries: [WKBGeometry]
+    public let geometries: [Geometry]
     public let srid: UInt
     
-    public static func == (lhs: WKBGeometryCollection, rhs: WKBGeometryCollection) -> Bool {
+    public static func == (lhs: GeometryCollection, rhs: GeometryCollection) -> Bool {
         guard lhs.srid == rhs.srid else {
             return false
         }
@@ -128,7 +143,7 @@ public struct WKBGeometryCollection: WKBGeometry, Equatable {
     }
 }
 
-public enum WKBByteOrder: UInt8 {
+public enum ByteOrder: UInt8 {
     case bigEndian = 0
     case littleEndian = 1
 }

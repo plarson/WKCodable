@@ -9,19 +9,23 @@ public class WKTDecoder {
 public extension WKTDecoder {
     enum Error: Swift.Error {
         case dataCorrupted
+        case unexpectedType
     }
 }
 
 public extension WKTDecoder {
     
     // MARK: - Public
-    
-    public func decode(from value: String) throws -> WKBGeometry {
+
+    public func decode<T>(from value: String) throws -> T {
         scanner = Scanner(string: value)
         scanner.charactersToBeSkipped = CharacterSet.whitespaces
         scanner.caseSensitive = false
         srid = try scanSRID()
-        return try scanGeometry()!
+        guard let value = try scanGeometry() as? T else {
+                throw Error.unexpectedType
+        }
+        return value
     }
     
     // MARK: - Private
@@ -43,7 +47,7 @@ public extension WKTDecoder {
         return UInt(srid)
     }
     
-    func scanGeometry() throws -> WKBGeometry? {
+    func scanGeometry() throws -> Geometry? {
         guard let type = scanType() else {
             throw Error.dataCorrupted
         }
@@ -58,69 +62,69 @@ public extension WKTDecoder {
             return point
         case .lineString:
             if empty{
-                return WKBLineString()
+                return LineString()
             } else {
-                var points: [WKBPoint] = []
+                var points: [Point] = []
                 while let point = scanPoint() {
                     points.append(point)
                 }
-                return WKBLineString(points: points)
+                return LineString(points: points)
             }
         case .polygon:
             if empty {
-                return WKBPolygon(exteriorRing: WKBLineString(points:[]))
+                return Polygon(exteriorRing: LineString(points:[]))
             } else {
-                var lineStrings: [WKBLineString] = []
+                var lineStrings: [LineString] = []
                 while let lineString = scanLineString() {
                     lineStrings.append(lineString)
                 }
-                return WKBPolygon(exteriorRing: lineStrings.first!)
+                return Polygon(exteriorRing: lineStrings.first!)
             }
         case .multiPoint:
             if empty {
-                return WKBMultiPoint(points: [])
+                return MultiPoint(points: [])
             } else {
-                var points: [WKBPoint] = []
+                var points: [Point] = []
                 while scanner.scanString("(", into: nil), let point = scanPoint() {
                     points.append(point)
                     if !scanner.scanString(",", into: nil) {
                         break
                     }
                 }
-                return WKBMultiPoint(points: points)
+                return MultiPoint(points: points)
             }
         case .multiLineString:
             if empty {
-                return WKBMultiLineString(lineStrings: [])
+                return MultiLineString(lineStrings: [])
             } else {
-                var lineStrings: [WKBLineString] = []
+                var lineStrings: [LineString] = []
                 while let lineString = scanLineString() {
                     lineStrings.append(lineString)
                 }
-                return WKBMultiLineString(lineStrings: lineStrings)
+                return MultiLineString(lineStrings: lineStrings)
             }
         case .multiPolygon:
             if empty {
-                return WKBMultiPolygon(polygons: [])
+                return MultiPolygon(polygons: [])
             } else {
-                var polygons: [WKBPolygon] = []
+                var polygons: [Polygon] = []
                 while let polygon = scanPolygon() {
                     polygons.append(polygon)
                 }
-                return WKBMultiPolygon(polygons: polygons)
+                return MultiPolygon(polygons: polygons)
             }
         case .geometryCollection:
             if empty {
-                return WKBGeometryCollection(geometries: [])
+                return GeometryCollection(geometries: [])
             } else {
-                var geometries: [WKBGeometry] = []
+                var geometries: [Geometry] = []
                 while let geometry = try scanGeometry() {
                     geometries.append(geometry)
                     if scanner.isAtEnd || scanner.scanString(")", into: nil) {
                         break
                     }
                 }
-                return WKBGeometryCollection(geometries: geometries)
+                return GeometryCollection(geometries: geometries)
             }
         }
     }
@@ -153,7 +157,7 @@ public extension WKTDecoder {
         return false
     }
     
-    func scanPoint() -> WKBPoint? {
+    func scanPoint() -> Point? {
         var vector: [Double] = []
         var number: Double = 0.0
         
@@ -167,11 +171,11 @@ public extension WKTDecoder {
             return nil
         }
         
-        return WKBPoint(vector: vector)
+        return Point(vector: vector)
     }
     
-    func scanLineString() -> WKBLineString? {
-        var points: [WKBPoint] = []
+    func scanLineString() -> LineString? {
+        var points: [Point] = []
         
         scanner.scanString("(", into: nil)
         while let point = scanPoint() {
@@ -182,11 +186,11 @@ public extension WKTDecoder {
             return nil
         }
         
-        return WKBLineString(points: points)
+        return LineString(points: points)
     }
     
-    func scanPolygon() -> WKBPolygon? {
-        var lineStrings: [WKBLineString] = []
+    func scanPolygon() -> Polygon? {
+        var lineStrings: [LineString] = []
         
         scanner.scanString("(", into: nil)
         while let lineString = scanLineString() {
@@ -198,7 +202,7 @@ public extension WKTDecoder {
         }
         
         let interiorRings = Array(lineStrings[1...])
-        return WKBPolygon(exteriorRing: lineStrings.first!, interiorRings: interiorRings)
+        return Polygon(exteriorRing: lineStrings.first!, interiorRings: interiorRings)
     }
     
 }

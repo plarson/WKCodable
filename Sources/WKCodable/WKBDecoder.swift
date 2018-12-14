@@ -4,7 +4,7 @@ public class WKBDecoder {
     public init() {}
     fileprivate var bytes: [UInt8] = []
     fileprivate var offset: Int = 0
-    fileprivate var byteOrder: WKBByteOrder = .bigEndian
+    fileprivate var byteOrder: ByteOrder = .bigEndian
     fileprivate var typeCode: UInt32 = 0
     fileprivate var pointSize: UInt8 = 2
     fileprivate var srid: UInt32 = 2
@@ -13,22 +13,31 @@ public class WKBDecoder {
 public extension WKBDecoder {
     enum Error: Swift.Error {
         case dataCorrupted
+        case unexpectedType
     }
 }
 
 extension WKBDecoder {
-    public func decode(from data: Data) throws -> WKBGeometry {
-        return try decode(from: [UInt8](data))
+    
+    // MARK: - Public
+
+    public func decode<T>(from data: Data) throws -> T {
+        guard let value = try decode(from: [UInt8](data)) as? T else {
+            throw Error.unexpectedType
+        }
+        return value
     }
     
-    public func decode(from bytes: [UInt8], srid: UInt32? = nil) throws -> WKBGeometry {
+    // MARK: - Private
+    
+    private func decode(from bytes: [UInt8], srid: UInt32? = nil) throws -> Geometry {
         self.bytes = bytes
         return try decode(srid: nil)
     }
     
-    private func decode(srid: UInt32? = nil) throws -> WKBGeometry {
+    private func decode(srid: UInt32? = nil) throws -> Geometry {
         var srid = srid
-        guard let byteOrder = WKBByteOrder(rawValue: try decode(UInt8.self)) else {
+        guard let byteOrder = ByteOrder(rawValue: try decode(UInt8.self)) else {
             throw Error.dataCorrupted
         }
         self.byteOrder = byteOrder
@@ -44,21 +53,21 @@ extension WKBDecoder {
             typeCode &= 0x0fffffff
             srid = try decode(UInt32.self)
         }
-        var result: WKBGeometry?
+        var result: Geometry?
         if typeCode == WKBTypeCode.point.rawValue {
-            result = try decode(WKBPoint.self)
+            result = try decode(Point.self)
         } else if typeCode == WKBTypeCode.lineString.rawValue {
-            result = try decode(WKBLineString.self)
+            result = try decode(LineString.self)
         } else if typeCode == WKBTypeCode.polygon.rawValue {
-            result = try decode(WKBPolygon.self)
+            result = try decode(Polygon.self)
         } else if typeCode == WKBTypeCode.multiPoint.rawValue {
-            result = try decode(WKBMultiPoint.self)
+            result = try decode(MultiPoint.self)
         } else if typeCode == WKBTypeCode.multiLineString.rawValue {
-            result = try decode(WKBMultiLineString.self)
+            result = try decode(MultiLineString.self)
         } else if typeCode == WKBTypeCode.multiPolygon.rawValue {
-            result = try decode(WKBMultiPolygon.self)
+            result = try decode(MultiPolygon.self)
         } else if typeCode == WKBTypeCode.geometryCollection.rawValue {
-            result = try decode(WKBGeometryCollection.self)
+            result = try decode(GeometryCollection.self)
         }
         
         if result == nil {
@@ -68,106 +77,106 @@ extension WKBDecoder {
         }
     }
     
-    private func decode(_ type: WKBPoint.Type) throws -> WKBPoint {
+    private func decode(_ type: Point.Type) throws -> Point {
         var vector: [Double] = []
         for _ in 0..<pointSize {
             let val = try decode(Double.self)
             vector.append(val)
         }
-        return WKBPoint(vector: vector)
+        return Point(vector: vector)
     }
     
-    private func decode(_ type: WKBLineString.Type) throws -> WKBLineString {
+    private func decode(_ type: LineString.Type) throws -> LineString {
         guard let count: UInt32 = try? decode(UInt32.self) else {
             // Empty case
-            return WKBLineString(points: [])
+            return LineString(points: [])
         }
         
-        var points: [WKBPoint] = []
+        var points: [Point] = []
         for _ in 0..<count {
-            points.append(try decode(WKBPoint.self))
+            points.append(try decode(Point.self))
         }
-        return WKBLineString(points: points)
+        return LineString(points: points)
     }
 
-    private func decode(_ type: WKBPolygon.Type) throws -> WKBPolygon {
+    private func decode(_ type: Polygon.Type) throws -> Polygon {
         let count: UInt32 = try decode(UInt32.self)
         
         if count == 0 {
-            return WKBPolygon(exteriorRing: WKBLineString(points: []))
+            return Polygon(exteriorRing: LineString(points: []))
         } else {
-            let exteriorRing: WKBLineString = try decode(WKBLineString.self)
-            var interiorRings: [WKBLineString] = []
+            let exteriorRing: LineString = try decode(LineString.self)
+            var interiorRings: [LineString] = []
             
             if count > 1 {
                 for _ in 0..<count - 1 {
-                    interiorRings.append(try decode(WKBLineString.self))
+                    interiorRings.append(try decode(LineString.self))
                 }
             }
             
-            return WKBPolygon(exteriorRing: exteriorRing, interiorRings: interiorRings)
+            return Polygon(exteriorRing: exteriorRing, interiorRings: interiorRings)
         }
     }
     
-    private func decode(_ type: WKBMultiPoint.Type) throws -> WKBMultiPoint {
+    private func decode(_ type: MultiPoint.Type) throws -> MultiPoint {
         guard let count: UInt32 = try? decode(UInt32.self) else {
             // Empty case
-            return WKBMultiPoint(points: [])
+            return MultiPoint(points: [])
         }
-        var subvalues: [WKBPoint] = []
+        var subvalues: [Point] = []
         for _ in 0..<count {
-            guard let subvalue = try decode(srid: self.srid) as? WKBPoint else {
+            guard let subvalue = try decode(srid: self.srid) as? Point else {
                 throw Error.dataCorrupted
             }
             
             subvalues.append(subvalue)
         }
-        return WKBMultiPoint(points: subvalues)
+        return MultiPoint(points: subvalues)
     }
     
-    private func decode(_ type: WKBMultiLineString.Type) throws -> WKBMultiLineString {
+    private func decode(_ type: MultiLineString.Type) throws -> MultiLineString {
         guard let count: UInt32 = try? decode(UInt32.self) else {
             // Empty case
-            return WKBMultiLineString(lineStrings: [])
+            return MultiLineString(lineStrings: [])
         }
-        var subvalues: [WKBLineString] = []
+        var subvalues: [LineString] = []
         for _ in 0..<count {
-            guard let subvalue = try decode(srid: self.srid) as? WKBLineString else {
+            guard let subvalue = try decode(srid: self.srid) as? LineString else {
                 throw Error.dataCorrupted
             }
             
             subvalues.append(subvalue)
         }
-        return WKBMultiLineString(lineStrings: subvalues)
+        return MultiLineString(lineStrings: subvalues)
     }
     
-    private func decode(_ type: WKBMultiPolygon.Type) throws -> WKBMultiPolygon {
+    private func decode(_ type: MultiPolygon.Type) throws -> MultiPolygon {
         guard let count: UInt32 = try? decode(UInt32.self) else {
             // Empty case
-            return WKBMultiPolygon(polygons: [])
+            return MultiPolygon(polygons: [])
         }
-        var subvalues: [WKBPolygon] = []
+        var subvalues: [Polygon] = []
         for _ in 0..<count {
-            guard let subvalue = try decode(srid: self.srid) as? WKBPolygon else {
+            guard let subvalue = try decode(srid: self.srid) as? Polygon else {
                 throw Error.dataCorrupted
             }
             
             subvalues.append(subvalue)
         }
-        return WKBMultiPolygon(polygons: subvalues)
+        return MultiPolygon(polygons: subvalues)
     }
     
-    private func decode(_ type: WKBGeometryCollection.Type) throws -> WKBGeometryCollection {
+    private func decode(_ type: GeometryCollection.Type) throws -> GeometryCollection {
         guard let count: UInt32 = try? decode(UInt32.self) else {
             // Empty case
-            return WKBGeometryCollection(geometries: [])
+            return GeometryCollection(geometries: [])
         }
-        var subvalues: [WKBGeometry] = []
+        var subvalues: [Geometry] = []
         for _ in 0..<count {
             let subvalue = try decode(srid: self.srid)
             subvalues.append(subvalue)
         }
-        return WKBGeometryCollection(geometries: subvalues)
+        return GeometryCollection(geometries: subvalues)
     }
     
     private func decode(_ type: UInt8.Type) throws -> UInt8 {

@@ -9,7 +9,7 @@ public extension WKTEncoder {
     
     // MARK: - Public
 
-    public func encode(_ value: WKBGeometry) -> String {
+    public func encode(_ value: Geometry) -> String {
         result = String()
         encode(value, withSrid: true)
         return result
@@ -17,14 +17,14 @@ public extension WKTEncoder {
     
     // MARK: - Private
     
-    private func encode(_ value: WKBPoint, withSrid: Bool) {
+    private func encode(_ value: Point, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.point.rawValue, for: value, srid: (withSrid ? value.srid : nil))
         append("(")
         append(string(for: value))
         append(")")
     }
     
-    private func encode(_ value: WKBLineString, withSrid: Bool) {
+    private func encode(_ value: LineString, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.lineString.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
         if value.points.count > 0 {
             append(string(for: value))
@@ -33,7 +33,7 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBPolygon, withSrid: Bool) {
+    private func encode(_ value: Polygon, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.polygon.rawValue, for: value.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
         if value.exteriorRing.points.count == 0 {
             append(" EMPTY")
@@ -45,7 +45,7 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBMultiPoint, withSrid: Bool) {
+    private func encode(_ value: MultiPoint, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.multiPoint.rawValue, for: value.points.first, srid: (withSrid ? value.srid : nil))
         if value.points.count > 0 {
             append("(")
@@ -57,7 +57,7 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBMultiLineString, withSrid: Bool) {
+    private func encode(_ value: MultiLineString, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.multiLineString.rawValue, for: value.lineStrings.first?.points.first, srid: (withSrid ? value.srid : nil))
         if value.lineStrings.count > 0 {
             append("(")
@@ -69,7 +69,7 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBMultiPolygon, withSrid: Bool) {
+    private func encode(_ value: MultiPolygon, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.multiPolygon.rawValue, for: value.polygons.first?.exteriorRing.points.first, srid: (withSrid ? value.srid : nil))
         if value.polygons.count > 0 {
             append("(")
@@ -81,7 +81,7 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBGeometryCollection, withSrid: Bool) {
+    private func encode(_ value: GeometryCollection, withSrid: Bool) {
         appendTypeCode(WKTTypeCode.geometryCollection.rawValue, for: nil, srid: (withSrid ? value.srid : nil))
         if value.geometries.count > 0 {
             append("(")
@@ -92,27 +92,27 @@ public extension WKTEncoder {
         }
     }
     
-    private func encode(_ value: WKBGeometry, withSrid: Bool) {
-        if let value = value as? WKBPoint {
+    private func encode(_ value: Geometry, withSrid: Bool) {
+        if let value = value as? Point {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBLineString {
+        } else if let value = value as? LineString {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBPolygon {
+        } else if let value = value as? Polygon {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBMultiPoint {
+        } else if let value = value as? MultiPoint {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBMultiLineString {
+        } else if let value = value as? MultiLineString {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBMultiPolygon {
+        } else if let value = value as? MultiPolygon {
             encode(value, withSrid: withSrid)
-        } else if let value = value as? WKBGeometryCollection {
+        } else if let value = value as? GeometryCollection {
             encode(value, withSrid: withSrid)
         } else {
             assertionFailure()
         }
     }
     
-    private func appendTypeCode(_ typeCode: String, for point: WKBPoint? = nil, srid: UInt?) {
+    private func appendTypeCode(_ typeCode: String, for point: Point? = nil, srid: UInt?) {
         var typeCode = typeCode
         
         if let srid = srid {
@@ -134,7 +134,7 @@ public extension WKTEncoder {
         result += value
     }
     
-    private func string(for value: WKBPoint) -> String {
+    private func string(for value: Point) -> String {
         var coords: [String] = []
         coords.append(String(value.x))
         coords.append(String(value.y))
@@ -147,14 +147,14 @@ public extension WKTEncoder {
         return coords.joined(separator: " ")
     }
     
-    private func string(for value: WKBLineString) -> String {
+    private func string(for value: LineString) -> String {
         var string = "("
         string += value.points.map { self.string(for: $0) }.joined(separator: ", ")
         string += ")"
         return string
     }
     
-    private func string(for value: WKBPolygon) -> String {
+    private func string(for value: Polygon) -> String {
         var string = "("
         string += value.lineStrings.map { self.string(for: $0) }.joined(separator: ", ")
         string += ")"
