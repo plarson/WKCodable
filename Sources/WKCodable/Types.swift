@@ -36,6 +36,9 @@ public struct Point: Geometry, Equatable {
         self.vector = vector
         self.srid = srid ?? 0
     }
+    public init(x: Double, y: Double) {
+        self.init(vector: [x,y])
+    }
     public let vector: [Double]
     public let srid: UInt
     public var x: Double { return vector[0] }
