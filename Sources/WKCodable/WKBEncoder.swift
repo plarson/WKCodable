@@ -18,7 +18,7 @@ public extension WKBEncoder {
     
     // MARK: - Public
     
-    public func encode(_ value: Geometry) -> Data {
+    func encode(_ value: Geometry) -> Data {
         data = Data()
         encode(value, withSrid: true)
         return data

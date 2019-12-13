@@ -9,7 +9,7 @@ public extension WKTEncoder {
     
     // MARK: - Public
 
-    public func encode(_ value: Geometry) -> String {
+    func encode(_ value: Geometry) -> String {
         result = String()
         encode(value, withSrid: true)
         return result

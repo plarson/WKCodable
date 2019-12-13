@@ -17,7 +17,7 @@ public extension WKTDecoder {
     
     // MARK: - Public
 
-    public func decode<T>(from value: String) throws -> T {
+    func decode<T>(from value: String) throws -> T {
         scanner = Scanner(string: value)
         scanner.charactersToBeSkipped = CharacterSet.whitespaces
         scanner.caseSensitive = false
