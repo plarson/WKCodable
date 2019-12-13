@@ -14,7 +14,7 @@ public extension WKBEncoder {
     }
 }
 
-public extension WKBEncoder {
+extension WKBEncoder {
     
     // MARK: - Public
     

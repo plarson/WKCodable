@@ -5,7 +5,7 @@ public class WKTEncoder {
     private var result: String = ""
 }
 
-public extension WKTEncoder {
+extension WKTEncoder {
     
     // MARK: - Public
 

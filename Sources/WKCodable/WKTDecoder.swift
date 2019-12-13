@@ -13,7 +13,7 @@ public extension WKTDecoder {
     }
 }
 
-public extension WKTDecoder {
+extension WKTDecoder {
     
     // MARK: - Public
 
