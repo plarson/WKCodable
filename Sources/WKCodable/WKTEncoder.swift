@@ -5,11 +5,11 @@ public class WKTEncoder {
     private var result: String = ""
 }
 
-public extension WKTEncoder {
+extension WKTEncoder {
     
     // MARK: - Public
 
-    func encode(_ value: Geometry) -> String {
+    public func encode(_ value: Geometry) -> String {
         result = String()
         encode(value, withSrid: true)
         return result

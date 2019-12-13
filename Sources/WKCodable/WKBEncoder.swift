@@ -14,11 +14,11 @@ public extension WKBEncoder {
     }
 }
 
-public extension WKBEncoder {
+extension WKBEncoder {
     
     // MARK: - Public
     
-    func encode(_ value: Geometry) -> Data {
+    public func encode(_ value: Geometry) -> Data {
         data = Data()
         encode(value, withSrid: true)
         return data
